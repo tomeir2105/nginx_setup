@@ -68,7 +68,9 @@ To remove an existing virtual host, run the script with the same domain name and
 - Restarts Nginx to apply changes  
 
 ### **5. Cleanup on Failure**  
-- If anything goes wrong, the script removes all created files and directories  
+- If anything goes wrong, the script removes all created files and directories
+
+
 
 # **Nginx Modules Install Script**
 ## Overview
