@@ -15,7 +15,7 @@ This script automates the process of setting up a virtual host in Nginx on Ubunt
 ✅ Cleans up if something goes wrong  
 
 ## **Remarks**
-- The script allows you to remove the virtual-host if it detect it exists.
+- The script allows you to remove existant virtual-host.
 - I used the tee command, to echo files and solve permissions problem.
 - when the script finishes,it opens up firefox with the new site.
    
@@ -81,7 +81,7 @@ This script automates the installation and configuration of various Nginx module
 - Configures PAM authentication.
 - Adds user directory support (`~/public_html`).
 
-## Prerequisites
+## Requirements
 - A working installation of Nginx.
 - A Debian-based system with `apt` package manager.
 - Sudo privileges.
