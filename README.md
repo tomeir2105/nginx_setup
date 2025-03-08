@@ -14,6 +14,11 @@ This script automates the process of setting up a virtual host in Nginx on Ubunt
 ✅ Updates `/etc/hosts` for local access  
 ✅ Cleans up if something goes wrong  
 
+## **Remarks**
+- The script allows you to remove the virtual-host if it detect it exists.
+- I used the tee command, to echo files and solve permissions problem.
+- when the script finishes,it opens up firefox with the new site.
+   
 ## **Requirements**  
 - Ubuntu/Debian-based Linux distribution  
 - Nginx installed (`sudo apt update && sudo apt install nginx -y`)  
