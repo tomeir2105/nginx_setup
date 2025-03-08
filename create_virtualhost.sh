@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ######################################
 # Created by : Meir
-# Purpose : nginx modules install script
+# Purpose : nginx create virtual host script
 # Date : 7/3/25
 # Version : 1
 #set -x
