@@ -34,6 +34,8 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
     display_help
 fi
 
+DOMAIN_NAME="$1"
+
 check_nginx_common() {
     if ! dpkg -s 'nginx-common' &>/dev/null; then
         echo "nginx-common is missing"
@@ -59,11 +61,10 @@ check_nginx() {
 
 # create domain folder and set permissions
 create_domain_folder() {
-    full_domain_folder="$nginx_root/$1"
-    sudo mkdir -p $full_domain_folder
-    sudo mkdir -p $full_domain_folder/html
-    sudo chown -R $USER:$USER $full_domain_folder/html
-    sudo chmod -R 755 $nginx_root
+    full_domain_folder="$nginx_root/$DOMAIN_NAME"
+    sudo mkdir -p "$full_domain_folder/html"
+    sudo chown -R "$USER:$USER" "$full_domain_folder/html"
+    sudo chmod -R 755 "$nginx_root"
     echo "Domain folder created and permissions granted."
 }
 
@@ -71,34 +72,34 @@ create_domain_folder() {
 create_domain_config() {
     echo "server {
         listen 80;
-        server_name $1 www.$1;
-        root /var/www/$1/html;
+        server_name $DOMAIN_NAME www.$DOMAIN_NAME;
+        root /var/www/$DOMAIN_NAME/html;
         index index.html;
         location / { 
             index index.html; 
             }
-    }" | sudo tee "/etc/nginx/sites-available/$1" > /dev/null
+    }" | sudo tee "/etc/nginx/sites-available/$DOMAIN_NAME" > /dev/null
 
     if [ $? -ne 0 ]; then
         echo "Failed writing configuration to sites-available."
-        cleanup_after_failure $1
+        cleanup_after_failure
         exit 1
     fi
 
-    echo "Successfully created configuration file for $1"
+    echo "Successfully created configuration file for $DOMAIN_NAME"
 }
 
 # create a symlink to site
 enable_virtual_host() {
-    if [ -L "/etc/nginx/sites-enabled/$1" ]; then
+    if [ -L "/etc/nginx/sites-enabled/$DOMAIN_NAME" ]; then
         echo "Symlink already exists. Removing it..."
-        sudo rm "/etc/nginx/sites-enabled/$1"
+        sudo rm "/etc/nginx/sites-enabled/$DOMAIN_NAME"
     fi
 
-    sudo ln -s "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/"
+    sudo ln -s "/etc/nginx/sites-available/$DOMAIN_NAME" "/etc/nginx/sites-enabled/"
     if [ $? -ne 0 ]; then
         echo "Failed creating link to site."
-        cleanup_after_failure $1
+        cleanup_after_failure
         exit 1
     fi
 
@@ -113,16 +114,16 @@ copy_index_html() {
         <body>
             Site is up and running!
         </body>
-    </html>" | sudo tee $nginx_root/$1/html/index.html > /dev/null
-    echo "Created index.html file in - $nginx_root/$1/html"
+    </html>" | sudo tee "$nginx_root/$DOMAIN_NAME/html/index.html" > /dev/null
+    echo "Created index.html file in - $nginx_root/$DOMAIN_NAME/html"
 }
 
 test_nginx_configuration() {
     test_site=$(sudo nginx -t 2>&1)
-    if echo $test_site | grep -q "test failed"; then
-        echo "Configuration error, check /etc/nginx/sites-available/$1"
+    if echo "$test_site" | grep -q "test failed"; then
+        echo "Configuration error, check /etc/nginx/sites-available/$DOMAIN_NAME"
         echo "Process failed, try again with a different virtual host name"
-        cleanup_after_failure $1
+        cleanup_after_failure
         exit 1
     else
         echo "Configuration checks successful"
@@ -131,47 +132,47 @@ test_nginx_configuration() {
 
 cleanup_after_failure() {
     echo "Removing all files added. Start again"
-    sudo rm -rf /etc/nginx/sites-enabled/$1
-    sudo rm -rf /etc/nginx/sites-available/$1
-    sudo rm -rf $nginx_root/$1
+    sudo rm -rf "/etc/nginx/sites-enabled/$DOMAIN_NAME"
+    sudo rm -rf "/etc/nginx/sites-available/$DOMAIN_NAME"
+    sudo rm -rf "$nginx_root/$DOMAIN_NAME"
     sudo systemctl restart nginx
     echo "Virtual host removed."
 }
 
 finalize_nginx_local_setup() {
     sudo systemctl restart nginx
-    echo "127.0.0.1 $1" | sudo tee -a "/etc/hosts" > /dev/null
+    echo "127.0.0.1 $DOMAIN_NAME" | sudo tee -a "/etc/hosts" > /dev/null
     echo "Domain added to /etc/hosts"
-    firefox "http://$1/"
+    firefox "http://$DOMAIN_NAME/"
 }
 
 handle_existing_virtual_host() {
-    echo "$1 Exists. Do you want to remove this virtual host (yes/no)?"
+    echo "$DOMAIN_NAME Exists. Do you want to remove this virtual host (yes/no)?"
     read remove_domain
-    if [[ $remove_domain == "yes" ]]; then
-        cleanup_after_failure $1
+    if [[ "$remove_domain" == "yes" ]]; then
+        cleanup_after_failure
         exit 1
     fi
 }
 
 create_virtual_host() {
-    full_domain_folder="$nginx_root/$1"
+    full_domain_folder="$nginx_root/$DOMAIN_NAME"
     
     if [ ! -d "$full_domain_folder" ]; then
-        create_domain_folder $1
-        create_domain_config $1
-        enable_virtual_host $1
-        copy_index_html $1
-        test_nginx_configuration $1
-        finalize_nginx_local_setup $1
+        create_domain_folder
+        create_domain_config
+        enable_virtual_host
+        copy_index_html
+        test_nginx_configuration
+        finalize_nginx_local_setup
     else
-        handle_existing_virtual_host $1
+        handle_existing_virtual_host
     fi
 }
 
 main() {
     check_nginx
-    create_virtual_host $1
+    create_virtual_host
 }
 
-main $1
+main
