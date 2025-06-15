@@ -113,7 +113,7 @@ Run the script with the required parameters:
 ## Installation Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/nginx-modules-installer.git
+   git clone https://github.com/tomeir2105/nginx-modules-installer.git
    cd nginx-modules-installer
    ```
 2. Make the script executable:
