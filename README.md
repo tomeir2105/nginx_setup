@@ -27,8 +27,8 @@ This script automates the process of setting up a virtual host in Nginx on Ubunt
 ## **Installation**  
 Clone the repository and navigate into the project directory:  
 ```bash  
-git clone https://github.com/your-username/nginx-vhost-script.git  
-cd nginx-vhost-script  
+git clone https://github.com/tomeir2105/nginx_setup.git
+cd nginx_setup  
 chmod +x vhost.sh  # Make the script executable  
 ```
 
