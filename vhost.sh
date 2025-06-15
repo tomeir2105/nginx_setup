@@ -147,12 +147,14 @@ finalize_nginx_local_setup() {
 }
 
 handle_existing_virtual_host() {
-    echo "$DOMAIN_NAME Exists. Do you want to remove this virtual host (yes/no)?"
-    read remove_domain
-    if [[ "$remove_domain" == "yes" ]]; then
-        cleanup_after_failure
-        exit 1
-    fi
+    cleanup_after_failure
+    create_virtual_host
+    #echo "$DOMAIN_NAME Exists. Do you want to remove this virtual host (yes/no)?"
+    #read remove_domain
+    #if [[ "$remove_domain" == "yes" ]]; then
+    #    cleanup_after_failure
+    #    exit 1
+    #fi
 }
 
 create_virtual_host() {
