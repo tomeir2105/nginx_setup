@@ -1,8 +1,10 @@
 pipeline {
   agent { label 'git-agent' }
+
   environment {
-    DOMAIN = 'example.com'  // Replace or parameterize later
+    DOMAIN = 'example.com'  // You can parameterize this later
   }
+
   stages {
     stage('Install Nginx') {
       steps {
@@ -12,11 +14,19 @@ pipeline {
         '''
       }
     }
+
     stage('Clone Repository') {
       steps {
         git credentialsId: 'github-creds', url: 'https://github.com/tomeir2105/nginx_setup.git'
       }
     }
+
+    stage('Fix Permissions') {
+      steps {
+        sh 'chmod +x ./vhost.sh'
+      }
+    }
+
     stage('Run vhost.sh') {
       steps {
         sh './vhost.sh $DOMAIN'
