@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent { label 'your-agent-label' }
   environment {
     DOMAIN = 'example.com'  // Replace or parameterize later
   }
