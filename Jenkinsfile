@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'your-agent-label' }
+  agent { label 'git-agent' }
   environment {
     DOMAIN = 'example.com'  // Replace or parameterize later
   }
