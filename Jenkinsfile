@@ -1,8 +1,12 @@
 pipeline {
   agent { label 'git-agent' }
 
+  parameters {
+    string(name: 'DOMAIN_NAME', defaultValue: 'example.com', description: 'Enter the domain name to configure')
+  }
+
   environment {
-    DOMAIN = 'example.com'  // You can parameterize this later
+    DOMAIN = "${params.DOMAIN_NAME}"
   }
 
   stages {
@@ -29,7 +33,7 @@ pipeline {
 
     stage('Run vhost.sh') {
       steps {
-        sh './vhost.sh $DOMAIN'
+        sh "./vhost.sh $DOMAIN"
       }
     }
   }
